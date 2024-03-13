@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Creation Form</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.10/dist/vue.js"></script>
+  <script src="https://unpkg.com/vuelidate@0.7.6/dist/vuelidate.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <h2>Форма создания клиента</h2>
+    <form @submit.prevent="submitForm">
+      <!-- Personal Information Section -->
+      <div class="form-group">
+        <label for="surname">Фамилия*</label>
+        <input type="text" id="surname" v-model.trim="formData.surname" @blur="$v.formData.surname.$touch()">
+        <p v-if="$v.formData.surname.$error">Фамилия обязательна для заполнения.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="name">Имя*</label>
+        <input type="text" id="name" v-model.trim="formData.name" @blur="$v.formData.name.$touch()">
+        <p v-if="$v.formData.name.$error">Имя обязательно для заполнения.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="patronymic">Отчество</label>
+        <input type="text" id="patronymic" v-model.trim="formData.patronymic">
+      </div>
+
+      <div class="form-group">
+        <label for="dob">Дата рождения*</label>
+        <input type="date" id="dob" v-model.trim="formData.dob" @blur="$v.formData.dob.$touch()">
+        <p v-if="$v.formData.dob.$error">Дата рождения обязательна.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Номер телефона*</label>
+        <input type="tel" id="phone" v-model.trim="formData.phone" @blur="$v.formData.phone.$touch()">
+        <p v-if="$v.formData.phone.$error">Введите корректный номер телефона (11 цифр, начинается с 7).</p>
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Пол</label>
+        <select id="gender" v-model="formData.gender">
+          <option value="">Выберите пол</option>
+          <option value="male">Мужской</option>
+          <option value="female">Женский</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="clientGroup">Группа клиентов*</label>
+        <select id="clientGroup" v-model="formData.clientGroup" multiple @blur="$v.formData.clientGroup.$touch()">
+          <option value="VIP">VIP</option>
+          <option value="Проблемные">Проблемные</option>
+          <option value="ОМС">ОМС</option>
+        </select>
+        <p v-if="$v.formData.clientGroup.$error">Выберите минимум одну группу.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="attendingPhysician">Лечащий врач</label>
+        <select id="attendingPhysician" v-model="formData.attendingPhysician">
+          <option value="">Не выбран</option>
+          <option value="Иванов">Иванов</option>
+          <option value="Захаров">Захаров</option>
+          <option value="Чернышева">Чернышева</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label><input type="checkbox" v-model="formData.doNotSendSMS"> Не отправлять СМС</label>
+      </div>
+
+      <!-- Address Section -->
+      <div class="form-group">
+        <label for="postcode">Индекс</label>
+        <input type="text" id="postcode" v-model.trim="formData.address.postcode">
+      </div>
+
+      <div class="form-group">
+        <label for="country">Страна</label>
+        <input type="text" id="country" v-model.trim="formData.address.country">
+      </div>
+
+      <div class="form-group">
+        <label for="region">Область</label>
+        <input type="text" id="region" v-model.trim="formData.address.region">
+      </div>
+
+      <div class="form-group">
+        <label for="city">Город*</label>
+        <input type="text" id="city" v-model.trim="formData.address.city" @blur="$v.formData.address.city.$touch()">
+        <p v-if="$v.formData.address.city.$error">Город обязателен для заполнения.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="street">Улица</label>
+        <input type="text" id="street" v-model.trim="formData.address.street">
+      </div>
+
+      <div class="form-group">
+        <label for="house">Дом</label>
+        <input type="text" id="house" v-model.trim="formData.address.house">
+      </div>
+
+      <!-- Passport Section -->
+      <div class="form-group">
+        <label for="documentType">Тип документа*</label>
+        <select id="documentType" v-model="$v.formData.passport.documentType.$model" @blur="$v.formData.passport.documentType.$touch()">
+          <option value="Паспорт">Паспорт</option>
+          <option value="Свидетельство о рождении">Свидетельство о рождении</option>
+          <option value="Вод. удостоверение">Вод. удостоверение</option>
+        </select>
+        <p v-if="$v.formData.passport.documentType.$error">Выберите тип документа.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="passportSeries">Серия</label>
+        <input type="text" id="passportSeries" v-model.trim="formData.passport.series">
+      </div>
+
+      <div class="form-group">
+        <label for="passportNumber">Номер</label>
+        <input type="text" id="passportNumber" v-model.trim="formData.passport.number">
+      </div>
+
+      <div class="form-group">
+        <label for="issuedBy">Кем выдан</label>
+        <input type="text" id="issuedBy" v-model.trim="formData.passport.issuedBy">
+      </div>
+
+      <div class="form-group">
+        <label for="issueDate">Дата выдачи*</label>
+        <input type="date" id="issueDate" v-model.trim="formData.passport.issueDate" @blur="$v.formData.passport.issueDate.$touch()">
+        <p v-if="$v.formData.passport.issueDate.$error">Дата выдачи обязательна.</p>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit">Создать клиента</button>
+    </form>
+    <p v-if="successMessage">{{ successMessage }}</p>
+    <p v-if="errorMessage">{{ errorMessage }}</p>
+  </div>
+
+  <script>
+  Vue.use(window.vuelidate.default);
+  const { required, minLength, pattern } = window.validators;
+
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        formData: {
+          surname: '',
+          name: '',
+          patronymic: '',
+          dob: '',
+          phone: '',
+          gender: '',
+          clientGroup: [],
+          attendingPhysician: '',
+          doNotSendSMS: false,
+          address: {
+            postcode: '',
+            country: '',
+            region: '',
+            city: '',
+            street: '',
+            house: '',
+          },
+          passport: {
+            documentType: '',
+            series: '',
+            number: '',
+            issuedBy: '',
+            issueDate: '',
+          },
+        },
+        successMessage: '',
+        errorMessage: '',
+      };
+    },
+    validations: {
+      formData: {
+        surname: { required, minLength: minLength(2) },
+        name: { required, minLength: minLength(2) },
+        dob: { required },
+        phone: { required, pattern: pattern(/^7[0-9]{10}$/) },
+        clientGroup: { required },
+        address: {
+          city: { required },
+        },
+        passport: {
+          documentType: { required },
+          issueDate: { required },
+        },
+      },
+    },
+    methods: {
+      submitForm() {
+        this.$v.$touch();
+        if (!this.$v.$invalid) {
+          // Handle form submission, e.g., send data to an API
+          this.successMessage = 'Клиент успешно создан';
+          this.errorMessage = '';
+        } else {
+          this.successMessage = '';
+          this.errorMessage = 'Пожалуйста, исправьте ошибки в форме.';
+        }
+      },
+    },
+  });
+  </script>
+</body>
+</html>
